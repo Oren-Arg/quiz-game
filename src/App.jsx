@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Score from "./components/Score";
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 import Questions from "./components/Questions";
 import Timer from "./components/Timer";
 import GameOver from "./components/GameOver";
 import Loading from "./components/Loading";
 import Celebration from "./components/Celebration";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 import { Typography } from "@mui/material";
 
 export default function App() {
@@ -17,8 +17,7 @@ export default function App() {
   const [score, setScore] = useState(0);
   const [seconds, setSeconds] = useState(10);
   const [timesUp, setTimesUp] = useState(false);
-  const [gameOver, setGameOver] = useState(false)
-
+  const [gameOver, setGameOver] = useState(false);
 
   // USE EFFECT
   useEffect(() => {
@@ -41,9 +40,9 @@ export default function App() {
       } finally {
         setLoading(false);
       }
-    }
-    getData()
-  }, [])
+    };
+    getData();
+  }, []);
 
   useEffect(() => {
     if (!gameOver) {
@@ -54,47 +53,47 @@ export default function App() {
 
   useEffect(() => {
     if (isNextQuestion()) {
-      setTimesUp(false)
+      setTimesUp(false);
     }
-  })
+  });
 
   useEffect(() => {
     if (timesUp) {
-      nextQuestion()
-      resetQuestionCountdown()
+      nextQuestion();
+      resetQuestionCountdown();
     }
   }, [timesUp]);
 
   // LOGIC
   const handleAnswersData = (rawData) => {
     const questionsFormat = rawData.map((question) => {
-      let copyQuestion = [...question.incorrect_answers]
-      copyQuestion.push(question.correct_answer)
+      let copyQuestion = [...question.incorrect_answers];
+      copyQuestion.push(question.correct_answer);
       return {
         category: question.category,
         correct_answer: question.correct_answer,
         difficulty: question.difficulty,
         answers: shuffle(copyQuestion),
-        question: question.question.replace(/&quot;/g, '"')
-      }
-    })
-    questionsFormat.push(AddOrenQuestion())
-    return questionsFormat
-  }
+        question: question.question.replace(/&quot;/g, '"'),
+      };
+    });
+    questionsFormat.push(AddOrenQuestion());
+    return questionsFormat;
+  };
 
   const AddOrenQuestion = () => {
     return {
-      category: 'Monday Candidates ',
-      correct_answer: 'HELL YEAH',
-      difficulty: 'bonus',
-      answers: ['NO', 'HELL YEAH'],
-      question: `Oren seems like a good candidate for Monday's program, don't you think?`
-    }
-  }
+      category: "Monday Candidates ",
+      correct_answer: "HELL YEAH",
+      difficulty: "bonus",
+      answers: ["NO", "HELL YEAH"],
+      question: `Oren seems like a good candidate for Monday's program, don't you think?`,
+    };
+  };
 
   const shuffle = (array) => {
-    return array.sort(() => Math.random() - 0.5)
-  }
+    return array.sort(() => Math.random() - 0.5);
+  };
 
   const updateTime = () => {
     if (seconds === 0) {
@@ -106,11 +105,10 @@ export default function App() {
 
   const resetQuestionCountdown = () => {
     setSeconds(10);
-  }
-
+  };
   const isNextQuestion = () => {
     return currentQuestion < data.length - 1;
-  }
+  };
 
   const nextQuestion = () => {
     const nextQue = currentQuestion + 1;
@@ -118,27 +116,27 @@ export default function App() {
       setCurrentQuestion(nextQue);
       resetQuestionCountdown();
     } else {
-      setGameOver(true)
-      setSeconds(0)
+      setGameOver(true);
+      setSeconds(10);
     }
-  }
+  };
 
   const isHeWinner = () => {
     return score === data.length;
-  }
+  };
 
   const advanceQuestion = (correct) => {
     if (correct) {
       setScore(score + 1);
     }
-    nextQuestion()
+    nextQuestion();
   };
 
   const resetGame = () => {
     setCurrentQuestion(0);
     setScore(0);
-    setGameOver(false)
-  }
+    setGameOver(false);
+  };
 
   return (
     <div id="root">
@@ -149,20 +147,26 @@ export default function App() {
           {error && <div> Theres an issue with loading questions</div>}
           <Score score={score} questions={data.length} />
           {isHeWinner() && <Celebration />}
-          {gameOver && !isHeWinner() ? <GameOver resetGame={resetGame} /> : null}
+          {gameOver && !isHeWinner() ? (
+            <GameOver resetGame={resetGame} />
+          ) : null}
           {!gameOver && !isHeWinner() ? (
             <Questions
               questions={data}
               currentQuestion={currentQuestion}
               advanceQuestion={advanceQuestion}
             />
-          ) : <Button onClick={resetGame}> <span role="img" aria-label="restart">🔄</span>
-            <Typography>Play Again </Typography>
-          </Button>}
+          ) : (
+            <Button onClick={resetGame}>
+              {" "}
+              <span role="img" aria-label="restart">
+                🔃
+              </span>
+              <Typography>Play Again </Typography>
+            </Button>
+          )}
         </Grid>
       </Grid>
     </div>
   );
 }
-
-
